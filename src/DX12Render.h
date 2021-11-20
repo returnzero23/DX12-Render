@@ -27,8 +27,15 @@ private:
 
     UINT mFrameIndex = 0;
 
+    UINT mRtvDescriptorSize = 0;
+
     ComPtr<ID3D12Device>       mDevice;
     ComPtr<ID3D12CommandQueue> mCommandQueue;
     ComPtr<IDXGISwapChain3>    mSwapChain;
     ComPtr<ID3D12CommandList>  mCommandList;
+    ComPtr<ID3D12CommandAllocator> mCommandAllocator;
+
+    ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+
+    ComPtr<ID3D12Resource> mRenderTargets[FrameCount];
 };

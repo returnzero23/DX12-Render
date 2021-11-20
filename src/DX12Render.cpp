@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DX12Render.h"
 #include "dxgiformat.h"
+#include "d3dx12.h"
 
 void DX12Render::OnInit()
 {
@@ -80,6 +81,7 @@ void DX12Render::LoadPipeline()
     swapChainDesc.Height = mHeight;
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapChainDesc.SampleDesc.Count = 1;
     
     ComPtr<IDXGISwapChain1> swapChain;
@@ -101,14 +103,30 @@ void DX12Render::LoadPipeline()
     // Create descriptor heaps
     {
         D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+        rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        rtvHeapDesc.NumDescriptors = FrameCount;
+        rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+
+        ThrowIfFailed(mDevice->CreateDescriptorHeap(&rtvHeapDesc,IID_PPV_ARGS(&mRtvHeap)));
+
+        mRtvDescriptorSize = mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     }
 
+    // Create frame resource
+    {
+        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+
+        // Create a RTV for each frame.
+        for(UINT n = 0;n < FrameCount; ++n)
+        {
+            ThrowIfFailed(mSwapChain->GetBuffer(n,IID_PPV_ARGS(&mRenderTargets[n])));
+            mDevice->CreateRenderTargetView(mRenderTargets[n].Get(),nullptr,rtvHandle);
+            rtvHandle.Offset(1,mRtvDescriptorSize);
+        }
+    }
     
-    // Create Command List
-    
-
-
-
+    // Create Command Allocator
+    ThrowIfFailed(mDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&mCommandAllocator)));
 }
 
 void DX12Render::LoadAssets()

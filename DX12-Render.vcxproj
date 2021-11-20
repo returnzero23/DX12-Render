@@ -104,7 +104,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>dxgi.lib;d3d12.lib</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d12.lib;user32.lib;shell32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%WindowsSdkDir \ Lib % WindowsSDKVersion% \ \um\arch</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -122,6 +122,7 @@
     <ClCompile Include="src\Win32Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\d3dx12.h" />
     <ClInclude Include="src\DX12Render.h" />
     <ClInclude Include="src\DXSample.h" />
     <ClInclude Include="src\DXSampleHelper.h" />

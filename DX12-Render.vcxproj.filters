@@ -44,5 +44,8 @@
     <ClInclude Include="src\DX12Render.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\d3dx12.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
