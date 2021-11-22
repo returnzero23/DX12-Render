@@ -24,17 +24,23 @@ private:
     void LoadPipeline();
     void LoadAssets();
 
+    std::vector<UINT8> GenerateTextureData();
+
     void PopulateCommandList();
 
     void WaitForPreviousFrame();
 
 private:
     static const UINT FrameCount = 2;
+    static const UINT TextureWidth = 256;
+    static const UINT TextureHeight = 256;
+    static const UINT TexturePixelSize = 4;    // The number of bytes used to represent a pixel in the texture.
 
     struct Vertex
     {
         XMFLOAT3 position;
         XMFLOAT4 color;
+        XMFLOAT2 coord;
     };
 
     UINT mWidth = 1;
@@ -57,9 +63,11 @@ private:
     ComPtr<ID3D12PipelineState> mPipelineState;
 
     ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    ComPtr<ID3D12DescriptorHeap> mSrvHeap;
 
     ComPtr<ID3D12Resource> mRenderTargets[FrameCount];
     ComPtr<ID3D12Resource> mVertexBuffer;
+    ComPtr<ID3D12Resource> mTexture;
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView;
 
     // Synchronization objects.
