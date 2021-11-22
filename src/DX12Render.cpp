@@ -223,8 +223,6 @@ void DX12Render::LoadAssets()
     //Create Command list
     ThrowIfFailed(mDevice->CreateCommandList(0,D3D12_COMMAND_LIST_TYPE_DIRECT,mCommandAllocator.Get(),mPipelineState.Get(), IID_PPV_ARGS(&mCommandList)));
 
-    ThrowIfFailed(mCommandList->Close());
-
     // Create the vertex buffer
     {
         // Define the geometry for a triangle.
@@ -315,6 +313,11 @@ void DX12Render::LoadAssets()
         srvDesc.Texture2D.MipLevels = 1;
         mDevice->CreateShaderResourceView(mTexture.Get(), &srvDesc, mSrvHeap->GetCPUDescriptorHandleForHeapStart());
     }
+
+    ThrowIfFailed(mCommandList->Close());
+    ID3D12CommandList* ppCommandLists[] = { mCommandList.Get() };
+    mCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
